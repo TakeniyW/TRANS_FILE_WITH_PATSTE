@@ -1,0 +1,78 @@
+name: Build Windows EXE
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore:
+      - "dist/**"
+      - "**/*.md"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-windows-exe
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Check existing binaries
+        id: check
+        shell: pwsh
+        run: |
+          $has = (Test-Path "dist/send_tool.exe") -and (Test-Path "dist/recv_tool.exe")
+          $force = "${{ github.event_name }}" -eq "workflow_dispatch"
+          if ($has -and -not $force) {
+            "skip=true" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            Write-Host "Prebuilt exe already exists; skipping build."
+          } else {
+            "skip=false" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            Write-Host "Building Windows exe."
+          }
+
+      - name: Setup Python
+        if: steps.check.outputs.skip != 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PyInstaller
+        if: steps.check.outputs.skip != 'true'
+        run: python -m pip install --upgrade pip pyinstaller
+
+      - name: Build send_tool.exe
+        if: steps.check.outputs.skip != 'true'
+        run: python -m PyInstaller --noconfirm --clean --onefile --windowed --name send_tool --distpath dist --workpath build/send --specpath build send_tool.py
+
+      - name: Build recv_tool.exe
+        if: steps.check.outputs.skip != 'true'
+        run: python -m PyInstaller --noconfirm --clean --onefile --windowed --name recv_tool --distpath dist --workpath build/recv --specpath build recv_tool.py
+
+      - name: Verify
+        if: steps.check.outputs.skip != 'true'
+        shell: pwsh
+        run: |
+          if (!(Test-Path "dist/send_tool.exe")) { throw "send_tool.exe missing" }
+          if (!(Test-Path "dist/recv_tool.exe")) { throw "recv_tool.exe missing" }
+          Get-ChildItem dist | Format-Table Name, Length
+
+      - name: Commit prebuilt exe
+        if: steps.check.outputs.skip != 'true'
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f dist/send_tool.exe dist/recv_tool.exe
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update prebuilt Windows exe [skip ci]"
+            git push origin HEAD:main
+          fi
