@@ -1,0 +1,3 @@
+# 运行时仅依赖 Python 标准库（tkinter 随 Python 官方安装包提供）。
+# 以下依赖仅用于打包单文件 exe。
+pyinstaller>=6.0
