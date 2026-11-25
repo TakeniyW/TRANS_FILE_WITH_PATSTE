@@ -51,19 +51,30 @@ python -m clipfile.gui_receiver
 
 ### 打包为单文件 exe
 
-在 Windows 上双击或执行：
+> exe 只能在 Windows 上构建；Linux/macOS 只能生成对应平台的可执行文件。
+
+在 Windows 上双击 `build.bat`，或在项目根目录执行：
 
 ```bat
 build.bat
 ```
 
-脚本会在 `dist\` 下生成 `send_tool.exe` 和 `recv_tool.exe`，可直接拷贝到云桌面/本地运行。也可以手动执行：
+脚本会自动探测 `py` / `python`、检查 tkinter、安装 PyInstaller（如缺失），并在 `dist\` 下生成：
+
+```text
+dist\send_tool.exe
+dist\recv_tool.exe
+```
+
+如果打包失败，窗口会给出具体原因（Python 未安装、缺少 tkinter、PyInstaller 安装失败、被杀毒软件拦截等）。请从包含 `clipfile\` 目录的项目根目录运行脚本。也可以手动执行：
 
 ```bat
-pip install pyinstaller
-pyinstaller --noconfirm --clean --onefile --windowed --name send_tool send_tool.py
-pyinstaller --noconfirm --clean --onefile --windowed --name recv_tool recv_tool.py
+py -3 -m pip install pyinstaller
+py -3 -m PyInstaller --noconfirm --clean --onefile --windowed --name send_tool send_tool.py
+py -3 -m PyInstaller --noconfirm --clean --onefile --windowed --name recv_tool recv_tool.py
 ```
+
+手动执行时产物位于 `dist\`；如果使用的是 `python` 命令而不是 `py -3`，请自行替换。
 
 ## 使用步骤
 
