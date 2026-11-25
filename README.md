@@ -11,6 +11,17 @@
 
 全流程不发起任何网络连接，仅使用剪贴板纯文本通道。
 
+## 直接下载（推荐）
+
+仓库 `dist/` 已包含由 GitHub Actions 在 Windows x64 上构建好的单文件程序：
+
+| 文件 | 用途 | 下载 |
+|---|---|---|
+| `send_tool.exe` | 放入云桌面运行 | [直接下载](https://github.com/TakeniyW/TRANS_FILE_WITH_PATSTE/raw/main/dist/send_tool.exe) |
+| `recv_tool.exe` | 在本地运行 | [直接下载](https://github.com/TakeniyW/TRANS_FILE_WITH_PATSTE/raw/main/dist/recv_tool.exe) |
+
+也可以下载仓库 ZIP 后解压，`dist\` 目录中已包含两个 exe。只需把 `send_tool.exe` 放进云桌面，`recv_tool.exe` 留在本地，无需安装 Python。
+
 ## 功能特性
 
 - **分片传输**：默认 512 KB 一片（界面可选 128 KB / 256 KB / 512 KB / 1 MB），支持 500 MB 文件（可通过环境变量调整上限）。
@@ -51,7 +62,9 @@ python -m clipfile.gui_receiver
 
 ### 打包为单文件 exe
 
-> exe 只能在 Windows 上构建；Linux/macOS 只能生成对应平台的可执行文件。
+> 仓库 `dist/` 已提供预编译版本，通常无需自行打包；只有修改源码或需要自定义时才需重新构建。
+>
+> 本地打包只能在 Windows 上进行；Linux/macOS 只能生成对应平台的可执行文件。
 
 在 Windows 上双击 `build.bat`，或在项目根目录执行：
 
@@ -75,6 +88,14 @@ py -3 -m PyInstaller --noconfirm --clean --onefile --windowed --name recv_tool r
 ```
 
 手动执行时产物位于 `dist\`；如果使用的是 `python` 命令而不是 `py -3`，请自行替换。
+
+### GitHub Actions 自动构建
+
+仓库包含 [build-windows-exe.yml](.github/workflows/build-windows-exe.yml)：在 `windows-latest` 上用 Python 3.12 和 PyInstaller 构建两个 exe，并自动提交回 `dist/`。
+
+- 首次推送后自动构建；`dist/` 中已存在 exe 时跳过，避免重复提交二进制。
+- 修改源码后需要更新 exe 时，进入 Actions → “Build Windows EXE” → “Run workflow” 手动重建。
+- 构建使用 `--onefile --windowed`，产物为 Windows x64 GUI 程序。
 
 ## 使用步骤
 

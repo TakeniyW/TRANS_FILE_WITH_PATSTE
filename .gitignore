@@ -7,8 +7,12 @@ venv/
 
 # 打包产物
 build/
-dist/
 *.spec
+
+# dist 中仅保留预编译 exe，方便直接下载
+dist/*
+!dist/send_tool.exe
+!dist/recv_tool.exe
 
 # 运行时 / 测试产物
 .clipfile_temp/
