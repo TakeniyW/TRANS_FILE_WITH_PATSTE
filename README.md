@@ -30,6 +30,8 @@
 
 ## 快速开始
 
+> 详细的分步教程、断点续传方法、注意事项与故障排查见 [操作指南](docs/操作指南.md)。
+
 ### 源码运行
 
 ```bash
@@ -171,6 +173,8 @@ python -m unittest discover -s tests -v
 ├── tests/
 │   ├── test_protocol.py
 │   └── test_transfer.py
+├── docs/
+│   └── 操作指南.md         # 使用教程、注意事项与故障排查
 ├── send_tool.py           # 发送端入口
 ├── recv_tool.py           # 接收端入口
 ├── build.bat              # Windows 单文件 exe 打包脚本
