@@ -43,8 +43,8 @@ def _env_int(name: str, default: int) -> int:
     return value if value > 0 else default
 
 
-# 单文件大小上限，默认 500 MB，可用环境变量覆盖。
-MAX_FILE_SIZE = _env_int("CLIPFILE_MAX_FILE_SIZE", 500 * 1024 * 1024)
+# 单文件大小上限，默认 1.5 GB，可用环境变量覆盖。
+MAX_FILE_SIZE = _env_int("CLIPFILE_MAX_FILE_SIZE", 1536 * 1024 * 1024)
 
 _HEX8_RE = re.compile(r"^[0-9a-f]{8}$")
 _HEX64_RE = re.compile(r"^[0-9a-f]{64}$")

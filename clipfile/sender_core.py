@@ -37,7 +37,7 @@ def _state_file(path: Path) -> Path:
 class SenderSession:
     """一次发送会话。
 
-    构造时以流式方式计算整文件 SHA-256，因此 500 MB 文件也不会占用大量
+    构造时以流式方式计算整文件 SHA-256，因此 1.5 GB 文件也不会占用大量
     内存，仅耗时一次全量读取。
     """
 

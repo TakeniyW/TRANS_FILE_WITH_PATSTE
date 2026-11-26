@@ -24,7 +24,7 @@
 
 ## 功能特性
 
-- **分片传输**：默认 512 KB 一片（界面可选 128 KB / 256 KB / 512 KB / 1 MB），支持 500 MB 文件（可通过环境变量调整上限）。
+- **分片传输**：默认 512 KB 一片（界面可选 128 KB / 256 KB / 512 KB / 1 MB），默认支持 1.5 GB 文件（可通过环境变量调整上限）。大文件建议改用 1 MB 分片以减少片数。
 - **双端校验**：每片 CRC32 校验 + 整文件 SHA-256 端到端校验；校验失败保留临时分片，可补发重试。
 - **断点续传**：接收端进度持久化在保存目录，关闭工具后重新打开可继续接收；发送端也会记住上次发送位置。
 - **自动模式**：发送端可按固定间隔连续发送；接收端每秒轮询剪贴板，自动去重、自动合并。
@@ -157,7 +157,7 @@ py -3 -m PyInstaller --noconfirm --clean --onefile --windowed --name recv_tool r
 | 配置 | 默认值 | 说明 |
 |---|---|---|
 | 分片大小 | 512 KB | 发送端界面可选 128 KB / 256 KB / 512 KB / 1 MB |
-| 单文件上限 | 500 MB | 环境变量 `CLIPFILE_MAX_FILE_SIZE`（字节）可覆盖 |
+| 单文件上限 | 1.5 GB | 环境变量 `CLIPFILE_MAX_FILE_SIZE`（字节）可覆盖 |
 | 自动发送间隔 | 3 秒 | 发送端界面可调，1–60 秒 |
 | 剪贴板轮询间隔 | 1 秒 | 接收端自动监听固定间隔 |
 | 发送端进度目录 | `~/.clipfile` | 环境变量 `CLIPFILE_HOME` 可覆盖 |
@@ -165,10 +165,12 @@ py -3 -m PyInstaller --noconfirm --clean --onefile --windowed --name recv_tool r
 示例：
 
 ```bat
-set CLIPFILE_MAX_FILE_SIZE=1073741824
+set CLIPFILE_MAX_FILE_SIZE=2147483648
 set CLIPFILE_HOME=D:\clipfile-data
 send_tool.exe
 ```
+
+1.5 GB 文件按 1 MB 分片约 1536 片，传输耗时会较长，建议先用小文件确认剪贴板同步稳定。
 
 ## 测试
 
